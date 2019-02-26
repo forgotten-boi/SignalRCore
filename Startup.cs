@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace AspNetCore.SignalR
 {
@@ -15,6 +16,17 @@ namespace AspNetCore.SignalR
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAuthentication().AddJwtBearer(options=>
+                options.Events = new JwtBearerEvents {
+                    OnMessageReceived = context =>{
+                        var accessToken = context.Request.Query["access_token"];
+                        if(string.IsNullOrEmpty(accessToken)==false)
+                        {   
+                            context.Token = accessToken;
+                        }
+                        return Task.CompletedTask;
+                    }
+                });
             services.AddMvc();
             services.AddSignalR();
         }
