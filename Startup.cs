@@ -41,11 +41,13 @@ namespace AspNetCore.SignalR
             app.UseStaticFiles();
             app.UseSignalR(config =>
             {
+                config.MapHub<StreamHub>("/streamHub");
                 config.MapHub<MessageHub>("/messages");
             });
             app.UseMvc();
             app.UseRouting(routes =>
             {
+               
                 routes.MapGet("/", async context =>
                 {
                     //context.Response.Redirect("/pages");
